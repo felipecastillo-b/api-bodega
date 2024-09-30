@@ -12,3 +12,196 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Modelo de Usuarios
+model User {
+  id                Int                @id @default(autoincrement())
+  username          String             @unique
+  email             String             @unique
+  password          String
+  full_name         String
+  role              Role               @relation(fields: [roleId], references: [id])
+  roleId            Int
+  status            Status             @relation(fields: [statusId], references: [id])
+  statusId          Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  notifications     Notification[]
+  transactions      Transaction[]
+  transactionHistories TransactionHistory[] // Inversa de la relación con TransactionHistory
+  performedTransactions TransactionHistory[] @relation("PerformedBy") // Inversa de la relación con `performedBy`
+}
+
+// Modelo de Roles
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  users       User[]
+  permissions RolePermission[]
+}
+
+// Modelo de Permisos
+model Permission {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role        @relation(fields: [roleId], references: [id])
+  permission   Permission  @relation(fields: [permissionId], references: [id])
+  @@id([roleId, permissionId])
+}
+
+// Modelo de Status
+model Status {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  users       User[]
+  transactions Transaction[]
+}
+
+// Modelo de Notificaciones
+model Notification {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  message    String
+  messageType String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// Modelo de Empresas
+model Company {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  email       String       @unique
+  address     String
+  phone       String
+  warehouses  Warehouse[]
+  products    Product[]
+  productHistories ProductHistory[] // Inversa de la relación con ProductHistory
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// Modelo de Bodegas
+model Warehouse {
+  id        Int       @id @default(autoincrement())
+  name      String
+  location  String
+  company   Company   @relation(fields: [companyId], references: [id])
+  companyId Int
+  inventory Inventory[]
+  createdAt DateTime  @default(now())
+}
+
+// Modelo de Inventario
+model Inventory {
+  id          Int        @id @default(autoincrement())
+  warehouse   Warehouse  @relation(fields: [warehouseId], references: [id])
+  warehouseId Int
+  product     Product    @relation(fields: [productId], references: [id])
+  productId   Int
+  quantity    Int
+  minimumQuantity Int     @default(0)
+  transactions Transaction[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Modelo de Productos
+model Product {
+  id            Int           @id @default(autoincrement())
+  name          String
+  description   String?
+  sku           String        @unique
+  price         Float
+  category      Category      @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  company       Company       @relation(fields: [companyId], references: [id])
+  companyId     Int
+  supplier      Supplier      @relation(fields: [supplierId], references: [id])
+  supplierId    Int
+  inventory     Inventory[]
+  productHistory ProductHistory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+// Modelo de Categorías
+model Category {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  products    Product[]
+  productHistories ProductHistory[] // Inversa de la relación con ProductHistory
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// Modelo de Proveedores
+model Supplier {
+  id          Int          @id @default(autoincrement())
+  name        String
+  contactName String
+  email       String       @unique
+  phone       String
+  address     String
+  products    Product[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// Modelo de Transacciones
+model Transaction {
+  id          Int          @id @default(autoincrement())
+  inventory   Inventory    @relation(fields: [inventoryId], references: [id])
+  inventoryId Int
+  user        User         @relation(fields: [userId], references: [id])
+  userId      Int
+  status      Status       @relation(fields: [statusId], references: [id])
+  statusId    Int
+  transactionType String
+  quantity    Int
+  reason      String
+  transactionHistory TransactionHistory[]
+  createdAt   DateTime     @default(now())
+}
+
+// Modelo de Historial de Transacciones
+model TransactionHistory {
+  id          Int          @id @default(autoincrement())
+  transaction Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  user        User         @relation(fields: [userId], references: [id])
+  userId      Int
+  quantity    Int
+  reason      String
+  operationType String
+  performedBy User @relation(fields: [performedById], references: [id], name: "PerformedBy") // Fixed relation
+  performedById Int
+  transactionDate DateTime @default(now())
+  createdAt   DateTime     @default(now())
+}
+
+// Modelo de Historial de Productos
+model ProductHistory {
+  id          Int          @id @default(autoincrement())
+  product     Product      @relation(fields: [productId], references: [id])
+  productId   Int
+  name        String
+  price       Float
+  category    Category     @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  operationType String
+  company     Company      @relation(fields: [companyId], references: [id])
+  companyId   Int
+  changeDate  DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+}

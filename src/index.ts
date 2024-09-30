@@ -13,6 +13,7 @@ app.get('/', (req, res) => {
     res.send(
         '<h1>Api Bodega</h1><br><p>Lorem Ipsum Merol</p>'
     );
+    console.log('Run Server');
 });
 
 
