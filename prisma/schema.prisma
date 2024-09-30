@@ -64,6 +64,7 @@ model Status {
   description String?
   users       User[]
   transactions Transaction[]
+  products Product[]
 }
 
 // Modelo de Notificaciones
@@ -129,6 +130,8 @@ model Product {
   companyId     Int
   supplier      Supplier      @relation(fields: [supplierId], references: [id])
   supplierId    Int
+  status        Status        @relation(fields: [statusId], references: [id]) // Relación con el modelo Status
+  statusId      Int
   inventory     Inventory[]
   productHistory ProductHistory[]
   createdAt     DateTime      @default(now())
