@@ -83,8 +83,11 @@ model Company {
   id          Int          @id @default(autoincrement())
   name        String       @unique
   email       String       @unique
+  password    String
   address     String
   phone       String
+  website     String?
+  image_url   String?
   warehouses  Warehouse[]
   products    Product[]
   productHistories ProductHistory[] // Inversa de la relación con ProductHistory
@@ -132,6 +135,7 @@ model Product {
   supplierId    Int
   status        Status        @relation(fields: [statusId], references: [id]) // Relación con el modelo Status
   statusId      Int
+  image_url     String?
   inventory     Inventory[]
   productHistory ProductHistory[]
   createdAt     DateTime      @default(now())
@@ -156,6 +160,7 @@ model Supplier {
   email       String       @unique
   phone       String
   address     String
+  image_url   String?
   products    Product[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -172,6 +177,7 @@ model Transaction {
   statusId    Int
   transactionType String
   quantity    Int
+  transtaction_cost    Int
   reason      String
   transactionHistory TransactionHistory[]
   createdAt   DateTime     @default(now())
