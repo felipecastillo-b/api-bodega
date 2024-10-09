@@ -1,9 +1,8 @@
 import cors from 'cors';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { error } from 'console';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -13,26 +12,30 @@ app.use(express.json());
 
 const JWT_SECRET = 'your_jwt_secret';
 
-// Define an interface for the JWT payload
-interface JwtPayloadWithUserId extends JwtPayload {
-    userId: string;
-}
+// Middleware para autenticar el token JWT
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+    }
 
-// Extend the Request interface to include userId
-interface AuthenticatedRequest extends Request {
-    userId?: string;
-}
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.userId = decoded.userId;
+        next();
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            return res.status(401).json({ error: 'Token expirado' });
+        }
+        if (error instanceof jwt.JsonWebTokenError) {
+            return res.status(401).json({ error: 'Token inválido' });
+        }
+        res.status(401).json({ error: 'No autorizado' });
+    }
+};
 
-// Rutas aqui Ejemplo
-//app.get('/', (req, res) => {
-//    res.send(
-//        '<h1>Api Bodega</h1><br><p>Lorem Ipsum Merol</p>'
-//    );
-//    console.log('Run Server');
-//});
-
-// Register de company
-app.post('/register', async (req: Request, res: Response) => {
+// Ruta para registrar una empresa
+app.post('/register', async (req, res) => {
     const { name, email, password, address, phone } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
@@ -51,8 +54,8 @@ app.post('/register', async (req: Request, res: Response) => {
     }
 });
 
-// Login de company
-app.post('/login', async (req: Request, res: Response) => {
+// Ruta para iniciar sesión
+app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const company = await prisma.company.findUnique({
         where: {
@@ -73,7 +76,7 @@ app.post('/login', async (req: Request, res: Response) => {
     res.json({ token });
 });
 
-// Start Server
+// Iniciar el servidor
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server escuchando en puerto ${PORT}`);
