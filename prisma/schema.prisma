@@ -20,6 +20,8 @@ model User {
   email             String             @unique
   password          String
   full_name         String
+  company           Company            @relation(fields: [companyId], references: [id])
+  companyId         Int
   role              Role               @relation(fields: [roleId], references: [id])
   roleId            Int
   status            Status             @relation(fields: [statusId], references: [id])
@@ -88,6 +90,7 @@ model Company {
   phone       String
   website     String?
   image_url   String?
+  users       User[]
   warehouses  Warehouse[]
   products    Product[]
   productHistories ProductHistory[] // Inversa de la relación con ProductHistory
