@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { decode } from 'jsonwebtoken';
 import { JWT_SECRET } from '../utils/jwtUtils.js';
 
 export const authenticate = (req, res, next) => {
@@ -9,7 +9,8 @@ export const authenticate = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.userId = decoded.userId;
+        console.log(decoded); // ver decoded
+        req.userId = decoded.companyId;
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
