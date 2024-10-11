@@ -1,4 +1,4 @@
-import jwt, { decode } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../utils/jwtUtils.js';
 
 export const authenticate = (req, res, next) => {
@@ -8,16 +8,24 @@ export const authenticate = (req, res, next) => {
     }
 
     try {
+        // Verifica el token y decodifica el contenido
         const decoded = jwt.verify(token, JWT_SECRET);
-        console.log(decoded); // ver decoded
-        req.userId = decoded.companyId;
+        
+        console.log(decoded); // Puedes revisar lo que contiene `decoded`
+
+        // Almacena el objeto `decoded` en `req.user`
+        req.user = decoded;
+        
+        // Si prefieres guardar solo el companyId, pero mantén el nombre consistente
+        req.companyId = decoded.companyId;
+
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
             return res.status(401).json({ error: 'Token expirado' });
         }
         if (error instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({ error: 'Token inválido' });
+            return res.status(401).json({ error: 'Token inválido back' });
         }
         res.status(401).json({ error: 'No autorizado' });
     }
