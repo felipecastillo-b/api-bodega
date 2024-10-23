@@ -103,6 +103,7 @@ export const loginUserService = async (email, password) => {
         token,
         user: {
             id: user.id,
+            email: user.email,
             username: user.username,
             fullname: user.full_name,
             role: user.role.name,
