@@ -58,3 +58,56 @@ export const registerUserService = async (username, password, full_name, email, 
 
     return newUser;
 };
+
+export const loginUserService = async (email, password) => {
+    // Busca el usuario por su email
+    const user = await prisma.user.findUnique({
+        where: { email },
+        include: {
+            company: true,
+            role: true,
+            status: true,
+        },
+    });
+
+    // No encuentra el Usuario
+    if (!user) {
+        return res.status(401).json({ error: 'Credenciales Invalidas' });
+    }
+
+    // Compara la contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        throw { status: 401, message: 'Credenciales Invalidas' };
+    }
+
+    // Verifica el Estado ('Activo') del Usuario
+    if (user.status.name !== 'Activo') {
+        throw { status: 403, message: 'Tu cuneta esta inactiva, contacta con el Admin' }
+    }
+
+    const token = jwt.sign(
+        {
+            userId: user.id,
+            email: user.email,
+            role: user.role.name,
+            companyId: user.companyId,
+        },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    // Return del token
+    return {
+        message: 'Inicio de sesion exitoso',
+        token,
+        user: {
+            id: user.id,
+            username: user.username,
+            fullname: user.full_name,
+            role: user.role.name,
+            company: user.company.name,
+            status: user.status.name,
+        },
+    };
+};

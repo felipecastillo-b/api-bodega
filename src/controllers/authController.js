@@ -1,6 +1,7 @@
-import { loginCompanyService, registerCompanyService, registerUserService } from '../services/authService.js';
+import prisma from '../prisma/prismaClient.js';
+import { loginCompanyService, loginUserService, registerCompanyService, registerUserService } from '../services/authService.js';
 
-
+// Endpoint registro de Compañia
 export const registerCompany = async (req, res) => {
     const { name, email, password, address, phone } = req.body;
 
@@ -12,6 +13,7 @@ export const registerCompany = async (req, res) => {
     }
 };
 
+// Endpoint login de Compañia
 export const loginCompany = async (req, res) => {
     const { email, password } = req.body;
 
@@ -26,10 +28,19 @@ export const loginCompany = async (req, res) => {
     }
 };
 
+// El registro de Usuarios lo maneja la Compañia o Administradores
 export const register = async (req, res) => {
 
-}
+};
 
+// Endpoint login de Usuario
 export const login = async (req, res) => {
+    const { email, password } = req.body;
 
-}
+    try {
+        const result = await loginUserService(email, password);
+        res.json(result);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message });
+    }
+};
