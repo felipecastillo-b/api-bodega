@@ -105,6 +105,8 @@ export const loginUserService = async (email, password) => {
             email: user.email,
             role: user.role.name,
             companyId: user.companyId,
+            fullname: user.full_name,
+            ...user,
         },
         JWT_SECRET,
         { expiresIn: '1h' }
@@ -122,6 +124,8 @@ export const loginUserService = async (email, password) => {
             role: user.role.name,
             company: user.company.name,
             status: user.status.name,
+            ...user,
+            password: undefined,
         },
     };
 };
