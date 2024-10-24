@@ -25,7 +25,20 @@ export const loginCompanyService = async (email, password) => {
         return null;
     }
 
-    const token = jwt.sign({ companyId: company.id.toString() }, JWT_SECRET, { expiresIn: '1h' });
+    const isCompany = true;
+
+    const token = jwt.sign({ 
+        companyId: company.id.toString(), 
+        isCompany,
+        companyName: company.name,
+        address: company.address,
+        phone: company.phone,
+        email: company.email,
+        website: company.website,
+        image_url: company.image_url,
+    }, 
+    JWT_SECRET, 
+    { expiresIn: '1h' });
     return token;
 };
 
