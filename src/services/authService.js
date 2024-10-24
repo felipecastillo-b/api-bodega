@@ -103,29 +103,11 @@ export const loginUserService = async (email, password) => {
         {
             userId: user.id,
             email: user.email,
-            role: user.role.name,
-            companyId: user.companyId,
-            fullname: user.full_name,
-            ...user,
         },
         JWT_SECRET,
         { expiresIn: '1h' }
     );
 
     // Return del token
-    return {
-        message: 'Inicio de sesion exitoso',
-        token,
-        user: {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            fullname: user.full_name,
-            role: user.role.name,
-            company: user.company.name,
-            status: user.status.name,
-            ...user,
-            password: undefined,
-        },
-    };
+    return { token, userId: user.id };
 };
