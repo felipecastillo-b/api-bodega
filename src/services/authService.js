@@ -103,11 +103,12 @@ export const loginUserService = async (email, password) => {
         {
             userId: user.id,
             email: user.email,
+            companyId: user.companyId,
         },
         JWT_SECRET,
         { expiresIn: '1h' }
     );
 
     // Return del token
-    return { token, userId: user.id };
+    return { token, userId: user.id, companyId: user.companyId };
 };
