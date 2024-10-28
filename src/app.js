@@ -5,6 +5,7 @@ import companyRoutes from './routes/companyRoutes.js';
 import userRoutes from './routes/userRoutes.js'
 import roleRoutes from './routes/roleRoutes.js'
 import warehouseRoutes from './routes/warehouseRoutes.js'
+import statusRoutes from './routes/statusRoutes.js'
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/auth', authRoutes);
 app.use('/company', companyRoutes);
 app.use('/user', userRoutes);
 app.use('/role', roleRoutes);
-app.use('/warehouse', warehouseRoutes)
+app.use('/warehouse', warehouseRoutes);
+app.use('/status', statusRoutes);
 
 export default app;
