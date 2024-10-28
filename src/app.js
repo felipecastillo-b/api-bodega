@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes.js'
 import roleRoutes from './routes/roleRoutes.js'
 import warehouseRoutes from './routes/warehouseRoutes.js'
 import statusRoutes from './routes/statusRoutes.js'
+import supplierRoutes from './routes/supplierRoutes.js'
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use('/user', userRoutes);
 app.use('/role', roleRoutes);
 app.use('/warehouse', warehouseRoutes);
 app.use('/status', statusRoutes);
+app.use('/supplier', supplierRoutes);
 
 export default app;
