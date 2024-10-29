@@ -149,6 +149,7 @@ model Product {
 model Category {
   id          Int          @id @default(autoincrement())
   name        String       @unique
+  description String?
   products    Product[]
   productHistories ProductHistory[] // Inversa de la relación con ProductHistory
   createdAt   DateTime     @default(now())
