@@ -112,15 +112,28 @@ model Warehouse {
 // Modelo de Inventario
 model Inventory {
   id          Int        @id @default(autoincrement())
+  name        String     @unique
   warehouse   Warehouse  @relation(fields: [warehouseId], references: [id])
   warehouseId Int
-  product     Product    @relation(fields: [productId], references: [id])
-  productId   Int
-  quantity    Int
-  minimumQuantity Int     @default(0)
+  products    InventoryProduct[]
   transactions Transaction[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+}
+
+// Nueva Tabla de Relación entre Inventarios y Productos
+model InventoryProduct {
+  id               Int       @id @default(autoincrement())
+  inventory        Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId      Int
+  product          Product   @relation(fields: [productId], references: [id])
+  productId        Int
+  quantity         Int       @default(1) // Establece un valor mínimo
+  minimumQuantity  Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([inventoryId, productId]) // Clave única para evitar duplicados en la relación
 }
 
 // Modelo de Productos
@@ -139,7 +152,7 @@ model Product {
   status        Status        @relation(fields: [statusId], references: [id]) // Relación con el modelo Status
   statusId      Int
   image_url     String?
-  inventory     Inventory[]
+  inventoryItems  InventoryProduct[] // Relación inversa con InventoryProduct
   productHistory ProductHistory[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

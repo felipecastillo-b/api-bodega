@@ -9,6 +9,7 @@ import statusRoutes from './routes/statusRoutes.js';
 import supplierRoutes from './routes/supplierRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import inventoryRoutes from './routes/inventoryRoutes.js';
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use('/status', statusRoutes);
 app.use('/supplier', supplierRoutes);
 app.use('/category', categoryRoutes);
 app.use('/product', productRoutes);
+app.use('/inventory', inventoryRoutes);
 
 export default app;

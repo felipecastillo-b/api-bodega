@@ -8,7 +8,7 @@ export const getProductsService = async () => {
             company: true,
             supplier: true,
             status: true,
-            inventory: true, // Incluye inventario si es necesario
+            inventoryItems: true, // Incluye inventario si es necesario
         },
     });
 };
@@ -21,7 +21,7 @@ export const createProductService = async (productData) => {
             description: productData.description,
             sku: productData.sku,
             price: parseFloat(productData.price), // convierte el precio a float
-            categoryId: parseInt(productData.categoryId, 10), // conecta a la categoría usando categoryId
+            categoryId: parseInt(productData.categoryId, 10), // conecta a la categoria usando categoryId
             supplierId: parseInt(productData.supplierId, 10), // conecta al proveedor usando supplierId
             statusId: parseInt(productData.statusId, 10), // conecta al estado usando statusId
             companyId: productData.companyId, // conecta a la compañía usando companyId

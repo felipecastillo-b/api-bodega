@@ -1,0 +1,147 @@
+import {
+    getAllInventoriesService,
+    getInventoryByIdService,
+    createInventoryService,
+    updateInventoryService,
+    deleteInventoryService,
+    addProductToInventoryService,
+    getProductsInInventoryService,
+    updateProductQuantityInInventoryService,
+    removeProductFromInventoryService
+} from '../services/inventoryService.js';
+
+export const getAllInventories = async (req, res) => {
+    try {
+        const inventories = await getAllInventoriesService();
+        res.status(200).json(inventories);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve inventories' });
+    }
+};
+
+export const getInventoryById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const inventory = await getInventoryByIdService(id);
+        if (!inventory) return res.status(404).json({ error: 'Inventory not found' });
+        res.status(200).json(inventory);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve inventory' });
+    }
+};
+
+export const createInventory = async (req, res) => {
+    const { name, warehouseId } = req.body;
+    try {
+        const newInventory = await createInventoryService({ name, warehouseId });
+        res.status(201).json(newInventory);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create inventory' });
+    }
+};
+
+export const updateInventory = async (req, res) => {
+    const { id } = req.params;
+    const { name, warehouseId } = req.body;
+    try {
+        const updatedInventory = await updateInventoryService(id, { name, warehouseId });
+        res.status(200).json(updatedInventory);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update inventory' });
+    }
+};
+
+export const deleteInventory = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await deleteInventoryService(id);
+        res.status(200).json({ message: 'Inventory deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete inventory' });
+    }
+};
+
+// InventoryProduct
+
+export const addProductToInventory = async (req, res) => {
+    const inventoryId = req.params.inventoryId;
+    const { productId, quantity, minimumQuantity } = req.body;
+
+    console.log("Datos recibidos body:", req.body);
+    console.log("Datos recibidos: inventoryid", req.params.inventoryId);
+
+    const parsedInventoryId = parseInt(inventoryId);
+    const parsedProductId = parseInt(productId);
+    const parsedQuantity = parseInt(quantity);
+    const parsedMinimumQuantity = minimumQuantity ? parseInt(minimumQuantity) : 0;
+
+    if (isNaN(parsedInventoryId) || isNaN(parsedProductId) || isNaN(parsedQuantity)) {
+        return res.status(400).json({ error: 'Datos invalidos' });
+    }
+
+    try {
+        const newProductInInventory = await addProductToInventoryService(
+            parsedInventoryId,
+            parsedProductId,
+            parsedQuantity,
+            parsedMinimumQuantity
+        );
+        res.status(201).json(newProductInInventory);
+    } catch (error) {
+        console.error("Error al añadir producto al inventario:", error);
+        if (error.code === 'P2002') {
+            return res.status(400).json({ message: "El producto ya existe en el inventario. Actualiza la cantidad en lugar de agregarlo." });
+        }
+        res.status(500).json({ message: "Error al añadir el producto al inventario", error: error.message });
+    }
+};
+
+export const listInventoryProducts = async (req, res) => {
+    const inventoryId = parseInt(req.params.inventoryId);
+
+    if (isNaN(inventoryId)) {
+        return res.status(400).json({ error: 'ID inventory invalido' });
+    }
+
+    try {
+        const products = await getProductsInInventoryService(inventoryId);
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Error al listar productos del inventario:", error);
+        res.status(500).json({ message: "Error al listar los productos del inventario", error: error.message });
+    }
+};
+
+export const getProductsInInventory = async (req, res) => {
+    const { inventoryId } = req.params;
+    try {
+        const products = await getProductsInInventoryService(inventoryId);
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve products in inventory' });
+    }
+};
+
+export const updateProductQuantityInInventory = async (req, res) => {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    try {
+        const updatedProduct = await updateProductQuantityInInventoryService(id, quantity);
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ error: 'Fallo al actualizar la cantidad de producto' });
+    }
+};
+
+export const removeProductFromInventory = async (req, res) => {
+    const { id } = req.params; // Este debe ser el ID de InventoryProduct
+    console.log(req.params);
+    console.log("deleteando el id:", id);
+    try {
+        await removeProductFromInventoryService(id); // El servicio debe recibir este ID
+        res.status(200).json({ message: 'Producto removido del inventario' });
+    } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        res.status(500).json({ error: 'Error al remover el producto del inventario' });
+    }
+};
