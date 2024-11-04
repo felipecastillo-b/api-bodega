@@ -195,7 +195,7 @@ model Transaction {
   statusId    Int
   transactionType String
   quantity    Int
-  transaction_cost    Float
+  transactionCost    Float
   reason      String
   product           Product      @relation(fields: [productId], references: [id]) // Nueva relación con Product
   productId         Int          // ID del producto en la transacción

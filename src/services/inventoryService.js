@@ -101,11 +101,28 @@ export const getProductsInInventoryService = async (inventoryId) => {
     });
 };
 
-export const updateProductQuantityInInventoryService = async (id, quantity) => {
-    return await prisma.inventoryProduct.update({
-        where: { id: parseInt(id) },
-        data: { quantity },
+export const updateProductQuantityInInventoryService = async (inventoryId, productId, quantity) => {
+    const existingProduct = await prisma.inventoryProduct.findUnique({
+        where: {
+            inventoryId_productId: {
+                inventoryId: inventoryId,
+                productId: productId,
+            },
+        },
     });
+
+    if (existingProduct) {
+        const newQuantity = existingProduct.quantity + quantity; // sumar o restar segun la operación
+        if (newQuantity < 0) {
+            throw new Error("No hay suficiente inventario para realizar la venta");
+        }
+        return await prisma.inventoryProduct.update({
+            where: { id: existingProduct.id },
+            data: { quantity: newQuantity },
+        });
+    } else {
+        throw new Error("Producto no encontrado en el inventario");
+    }
 };
 
 export const removeProductFromInventoryService = async (id) => {

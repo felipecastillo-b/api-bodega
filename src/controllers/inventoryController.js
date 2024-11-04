@@ -9,6 +9,7 @@ import {
     updateProductQuantityInInventoryService,
     removeProductFromInventoryService
 } from '../services/inventoryService.js';
+import { createTransactionService } from '../services/transactionService.js';
 
 export const getAllInventories = async (req, res) => {
     try {
@@ -65,7 +66,7 @@ export const deleteInventory = async (req, res) => {
 
 export const addProductToInventory = async (req, res) => {
     const inventoryId = req.params.inventoryId;
-    const { productId, quantity, minimumQuantity } = req.body;
+    const { productId, quantity, minimumQuantity, transactionType } = req.body; // transactionType: 'purchase' o 'sale'
 
     console.log("Datos recibidos body:", req.body);
     console.log("Datos recibidos: inventoryid", req.params.inventoryId);
@@ -80,6 +81,7 @@ export const addProductToInventory = async (req, res) => {
     }
 
     try {
+        /*
         const newProductInInventory = await addProductToInventoryService(
             parsedInventoryId,
             parsedProductId,
@@ -87,6 +89,51 @@ export const addProductToInventory = async (req, res) => {
             parsedMinimumQuantity
         );
         res.status(201).json(newProductInInventory);
+        */
+        // verifica si la operacion es una compra(purchase) o una venta(venta)
+        if (transactionType === 'purchase') {
+            // agregar productos al invnetario
+            const newProductInInventory = await addProductToInventoryService(
+                parsedInventoryId,
+                parsedProductId,
+                parsedQuantity,
+                parsedMinimumQuantity
+            );
+
+            // crear transaccion de compra
+            await createTransactionService({
+                inventoryId: parsedInventoryId,
+                userId: 1,
+                statusId: 201,
+                transactionType: 'purchase',
+                quantity: parsedQuantity,
+                reason: 'Compra de producto',
+                productId: parsedProductId,
+            });
+            return res.status(201).json(newProductInInventory);
+        } else if (transactionType === 'sale') {
+            // restar productos al inventario
+            const updatedProductInventory = await updateProductQuantityInInventoryService(
+                parsedInventoryId,
+                parsedProductId,
+                -parsedQuantity, // resta la cantidad
+            );
+            // crear transaccion de venta
+            await createTransactionService({
+                inventoryId: parsedInventoryId,
+                userId: 1,
+                statusId: 201,
+                transactionType: 'sale',
+                quantity: parsedQuantity,
+                reason: 'Venta de producto',
+                productId: parsedProductId,
+            });
+            return res.status(200).json(updatedProductInventory);
+        } else {
+            console.log("Received body:", req.body);
+            return res.status(400).json({ error: 'Tipo de transacción inválido' });
+        }
+
     } catch (error) {
         console.error("Error al añadir producto al inventario:", error);
         if (error.code === 'P2002') {

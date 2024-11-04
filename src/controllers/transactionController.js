@@ -10,17 +10,34 @@ import {
 export const createTransaction = async (req, res) => {
     const { inventoryId, userId, statusId, transactionType, quantity, reason, productId } = req.body;
 
+    // Validate required fields
+    if (!inventoryId || !userId || !statusId || !transactionType || !quantity || !reason || !productId) {
+        return res.status(400).json({ error: "Faltan datos requeridos para crear la transacción" });
+    }
+
     try {
+        // Parse IDs and quantity to integers
+        const parsedInventoryId = parseInt(inventoryId);
+        const parsedUserId = parseInt(userId);
+        const parsedStatusId = parseInt(statusId);
+        const parsedProductId = parseInt(productId);
+        const parsedQuantity = parseInt(quantity);
+
+        // Validate parsed values
+        if (isNaN(parsedInventoryId) || isNaN(parsedUserId) || isNaN(parsedStatusId) || isNaN(parsedProductId) || isNaN(parsedQuantity)) {
+            return res.status(400).json({ error: "ID de inventario, usuario, estado, producto o cantidad no válidos" });
+        }
+
         const transaction = await createTransactionService({
-            inventoryId,
-            userId,
-            statusId,
+            inventoryId: parsedInventoryId,
+            userId: parsedUserId,
+            statusId: parsedStatusId,
             transactionType,
-            quantity,
+            quantity: parsedQuantity,
             reason,
-            productId
+            productId: parsedProductId
         });
-        res.json(transaction);
+        res.status(201).json(transaction);
     } catch (error) {
         console.error("Error creating transaction:", error.message);
         res.status(500).json({ error: error.message });

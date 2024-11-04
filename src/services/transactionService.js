@@ -13,7 +13,7 @@ export const createTransactionService = async ({ inventoryId, userId, statusId, 
     }
 
     // Calcular el costo total de la transaccion
-    const transactionCost = product.price * quantity;
+    const transactionCost = transactionType === 'purchase' ? -(product.price * quantity) : (product.price * quantity);
 
     // crear la transaccion
     return await prisma.transaction.create({
