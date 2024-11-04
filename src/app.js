@@ -10,6 +10,7 @@ import supplierRoutes from './routes/supplierRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
+import transactionRoutes from './routes/transactionRoutes.js';
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use('/supplier', supplierRoutes);
 app.use('/category', categoryRoutes);
 app.use('/product', productRoutes);
 app.use('/inventory', inventoryRoutes);
+app.use('/transaction', transactionRoutes);
 
 export default app;

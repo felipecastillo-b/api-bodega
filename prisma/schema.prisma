@@ -154,6 +154,7 @@ model Product {
   image_url     String?
   inventoryItems  InventoryProduct[] // Relación inversa con InventoryProduct
   productHistory ProductHistory[]
+  transaction Transaction[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -194,8 +195,10 @@ model Transaction {
   statusId    Int
   transactionType String
   quantity    Int
-  transtaction_cost    Int
+  transaction_cost    Float
   reason      String
+  product           Product      @relation(fields: [productId], references: [id]) // Nueva relación con Product
+  productId         Int          // ID del producto en la transacción
   transactionHistory TransactionHistory[]
   createdAt   DateTime     @default(now())
 }
