@@ -143,6 +143,7 @@ model Product {
   description   String?
   sku           String        @unique
   price         Float
+  priceSell     Float
   category      Category      @relation(fields: [categoryId], references: [id])
   categoryId    Int
   company       Company       @relation(fields: [companyId], references: [id])

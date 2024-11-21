@@ -21,6 +21,7 @@ export const createProductService = async (productData) => {
             description: productData.description,
             sku: productData.sku,
             price: parseFloat(productData.price), // convierte el precio a float
+            priceSell: parseFloat(productData.price), // convierte el precio a float
             categoryId: parseInt(productData.categoryId, 10), // conecta a la categoria usando categoryId
             supplierId: parseInt(productData.supplierId, 10), // conecta al proveedor usando supplierId
             statusId: parseInt(productData.statusId, 10), // conecta al estado usando statusId

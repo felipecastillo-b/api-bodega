@@ -5,7 +5,7 @@ export const createTransactionService = async ({ inventoryId, userId, statusId, 
     // Obtener el precio del producto
     const product = await prisma.product.findUnique({
         where: { id: productId },
-        select: { price: true }
+        select: { price: true, priceSell: true }
     });
 
     if (!product) {
@@ -13,7 +13,7 @@ export const createTransactionService = async ({ inventoryId, userId, statusId, 
     }
 
     // Calcular el costo total de la transaccion
-    const transactionCost = transactionType === 'purchase' ? -(product.price * quantity) : (product.price * quantity);
+    const transactionCost = transactionType === 'purchase' ? -(product.price * quantity) : (product.priceSell * quantity);
 
     // crear la transaccion
     return await prisma.transaction.create({
