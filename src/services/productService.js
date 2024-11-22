@@ -16,16 +16,17 @@ export const getProductsService = async () => {
 // Crear un nuevo producto
 export const createProductService = async (productData) => {
     try {
+        const companyId = parseInt(productData.companyId, 10);
         const data = {
             name: productData.name,
             description: productData.description,
             sku: productData.sku,
             price: parseFloat(productData.price), // convierte el precio a float
-            priceSell: parseFloat(productData.price), // convierte el precio a float
+            priceSell: parseFloat(productData.priceSell), // convierte el precio a float
             categoryId: parseInt(productData.categoryId, 10), // conecta a la categoria usando categoryId
             supplierId: parseInt(productData.supplierId, 10), // conecta al proveedor usando supplierId
             statusId: parseInt(productData.statusId, 10), // conecta al estado usando statusId
-            companyId: productData.companyId, // conecta a la compañía usando companyId
+            companyId: companyId, // conecta a la compañía usando companyId
             image_url: productData.image_url, // incluye la URL de la imagen
         };
 
