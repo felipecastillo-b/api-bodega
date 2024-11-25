@@ -101,6 +101,25 @@ export const getProductsInInventoryService = async (inventoryId) => {
     });
 };
 
+export const getAllProductsInInventoryService = async () => {
+    return await prisma.inventoryProduct.findMany({
+        include: {
+            product: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            inventory: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+    });
+};
+
 export const updateProductQuantityInInventoryService = async (inventoryId, productId, quantity) => {
     const existingProduct = await prisma.inventoryProduct.findUnique({
         where: {

@@ -10,7 +10,8 @@ import {
     getProductsInInventory,
     updateProductQuantityInInventory,
     removeProductFromInventory,
-    listInventoryProducts
+    listInventoryProducts,
+    getAllProductsInInventory
 } from '../controllers/inventoryController.js';
 const router = Router();
 
@@ -22,6 +23,7 @@ router.put('/:id', authenticate, updateInventory);
 router.delete('/:id', authenticate, deleteInventory);
 
 // InventoryProduct rutas
+router.get('/all', authenticate, getAllProductsInInventory);
 router.get('/:inventoryId/product', authenticate, listInventoryProducts);
 router.post('/:inventoryId/product', authenticate, addProductToInventory);
 router.get('/:inventoryId/product', authenticate, getProductsInInventory);

@@ -38,7 +38,15 @@ export const getTransactionsService = async () => {
             inventory: true,
             user: true,
             status: true,
-            product: true
+            product: {
+                include: {
+                    category: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     });
 };

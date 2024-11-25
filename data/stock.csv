@@ -1,0 +1,4 @@
+id,inventoryName,productName,quantity,minimumQuantity,createdAt
+17,testtest,test,22,0,Thu Oct 31 2024 01:57:03 GMT-0300 (hora de verano de Chile)
+1,testtest,test product,41,50,Thu Oct 31 2024 00:02:09 GMT-0300 (hora de verano de Chile)
+19,testtest,chiftt,1,10,Tue Nov 19 2024 18:00:21 GMT-0300 (hora de verano de Chile)

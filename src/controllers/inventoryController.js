@@ -7,7 +7,8 @@ import {
     addProductToInventoryService,
     getProductsInInventoryService,
     updateProductQuantityInInventoryService,
-    removeProductFromInventoryService
+    removeProductFromInventoryService,
+    getAllProductsInInventoryService
 } from '../services/inventoryService.js';
 import { createTransactionService } from '../services/transactionService.js';
 
@@ -140,6 +141,16 @@ export const addProductToInventory = async (req, res) => {
             return res.status(400).json({ message: "El producto ya existe en el inventario. Actualiza la cantidad en lugar de agregarlo." });
         }
         res.status(500).json({ message: "Error al añadir el producto al inventario", error: error.message });
+    }
+};
+
+export const getAllProductsInInventory = async (req, res) => {
+    try {
+        const productsInInventory = await getAllProductsInInventoryService();
+        return res.status(200).json(productsInInventory);
+    } catch (error) {
+        console.error('Error al obtener todos los productos en inventarios:', error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
