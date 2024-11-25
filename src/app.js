@@ -11,6 +11,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
+import analysisRoutes from './routes/analysisRoutes.js';
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use('/category', categoryRoutes);
 app.use('/product', productRoutes);
 app.use('/inventory', inventoryRoutes);
 app.use('/transaction', transactionRoutes);
+app.use('/analysis', analysisRoutes);
 
 export default app;
