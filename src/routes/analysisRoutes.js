@@ -3,13 +3,14 @@ import { exec } from 'child_process';
 import { exportTransactionsToCSV, exportStockToCSV } from '../controllers/analysisController.js';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Importa fileURLToPath
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
 // Usar fileURLToPath para simular __dirname en módulos ECMAScript
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-router.get('/analyze-transactions', async (req, res) => {
+router.get('/analyze-transactions', authenticate, async (req, res) => {
     try {
         // exportar los datos a un archivo CSV
         const csvPath = await exportTransactionsToCSV();
@@ -40,7 +41,7 @@ router.get('/analyze-transactions', async (req, res) => {
     }
 });
 
-router.get('/analyze-stock', async (req, res) => {
+router.get('/analyze-stock', authenticate, async (req, res) => {
     try {
         // exportar los datos a un archivo CSV
         const csvPath = await exportStockToCSV();
