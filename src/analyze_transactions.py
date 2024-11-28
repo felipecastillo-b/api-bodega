@@ -28,16 +28,21 @@ def analyze_transactions(file_path):
     # Calcular ganancias por producto
     data['profit'] = (data['priceSell'] - data['price']) * data['quantity']
     
+    # Filtrar solo las ventas donde reason es "Venta de producto"
+    filtered_data = data[data['reason'] == 'Venta de producto']
+    
     # Calcular resumen de ganancias por producto
-    profit_summary = data.groupby('productId').agg(
+    profit_summary = filtered_data.groupby('productId').agg(
+        total_sales=('quantity', 'sum'),
         total_profit=('profit', 'sum')
     ).reset_index()
     
     # Unir el resumen de ganancias con los nombres de los productos
-    profit_summary = profit_summary.merge(data[['productId', 'productName']].drop_duplicates(), on='productId', how='left')
+    profit_summary = profit_summary.merge(
+        data[['productId', 'productName']].drop_duplicates(), on='productId',
+        how='left'
+    )
 
-    # Filtrar solo las ventas donde reason es "Venta de producto"
-    filtered_data = data[data['reason'] == 'Venta de producto']
 
     # Resumen por categoría basado en el filtro
     category_summary = filtered_data.groupby('categoryId').agg(
