@@ -55,9 +55,18 @@ export const createProductService = async (productData) => {
 
 // Actualizar un producto existente
 export const updateProductService = async (id, productData) => {
+    const { id: productId, price, priceSell, categoryId, supplierId, statusId, companyId, ...dataToUpdate } = productData;
+
+    if (price) dataToUpdate.price = parseFloat(price); // Convertir price a float
+    if (priceSell) dataToUpdate.priceSell = parseFloat(priceSell); // Convertir priceSell a float
+    if (categoryId) dataToUpdate.categoryId = parseInt(categoryId, 10); // Convertir categoryId a int
+    if (supplierId) dataToUpdate.supplierId = parseInt(supplierId, 10); // Convertir supplierId a int
+    if (statusId) dataToUpdate.statusId = parseInt(statusId, 10); // Convertir statusId a int
+    if (companyId) dataToUpdate.companyId = parseInt(companyId, 10); // Convertir statusId a int
+
     return await prisma.product.update({
-        where: { id: parseInt(id) },
-        data: productData,
+        where: { id: parseInt(id) }, // Usamos el ID como número
+        data: dataToUpdate, // Solo pasamos los datos relevantes, sin el campo 'id'
     });
 };
 
