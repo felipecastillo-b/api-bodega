@@ -2,6 +2,18 @@ import prisma from '../prisma/prismaClient.js';
 
 // Crear una nueva transaccion
 export const createTransactionService = async ({ inventoryId, userId, statusId, transactionType, quantity, reason, productId }) => {
+    // Obtener la última transacción para determinar el próximo ID disponible
+    const lastTransaction = await prisma.transaction.findFirst({
+        orderBy: {
+            id: 'desc'
+        },
+        select: {
+            id: true
+        }
+    });
+
+    const newId = lastTransaction ? lastTransaction.id + 1 : 1;
+
     // Obtener el precio del producto
     const product = await prisma.product.findUnique({
         where: { id: productId },
@@ -12,12 +24,13 @@ export const createTransactionService = async ({ inventoryId, userId, statusId, 
         throw new Error("Producto no encontrado");
     }
 
-    // Calcular el costo total de la transaccion
+    // Calcular el costo total de la transacción
     const transactionCost = transactionType === 'purchase' ? -(product.price * quantity) : (product.priceSell * quantity);
 
-    // crear la transaccion
+    // Crear la transacción con el nuevo ID
     return await prisma.transaction.create({
         data: {
+            id: newId, // Asignar el nuevo ID generado
             inventoryId,
             userId,
             statusId,
