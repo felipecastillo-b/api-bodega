@@ -16,8 +16,23 @@ export const getProductsService = async () => {
 // Crear un nuevo producto
 export const createProductService = async (productData) => {
     try {
+        // Obtener el último id del producto
+        const lastProduct = await prisma.product.findFirst({
+            orderBy: {
+                id: 'desc', // Ordena por id en orden descendente para obtener el último
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        // Asignar el nuevo id como el siguiente al último encontrado
+        const newId = lastProduct ? lastProduct.id + 1 : 1;
+
+        // Procesar los datos del nuevo producto
         const companyId = parseInt(productData.companyId, 10);
         const data = {
+            id: newId, // Asignar el nuevo id
             name: productData.name,
             description: productData.description,
             sku: productData.sku,

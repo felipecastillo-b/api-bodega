@@ -35,3 +35,7 @@ id,productId,productName,quantity,price,priceSell,categoryId,categoryName,reason
 34,1,test product,1,150,301,2,lacteos,Compra de producto,Mon Nov 25 2024 02:12:07 GMT-0300 (hora de verano de Chile)
 35,5,chiftt,1,15,50,3,zztestName21,Compra de producto,Mon Nov 25 2024 02:36:57 GMT-0300 (hora de verano de Chile)
 36,5,chiftt,2,15,50,3,zztestName21,Venta de producto,Mon Nov 25 2024 02:37:05 GMT-0300 (hora de verano de Chile)
+37,3,test,1,1313,1500,3,zztestName21,Compra de producto,Wed Nov 27 2024 22:08:33 GMT-0300 (hora de verano de Chile)
+38,1,test product,20,150,301,2,lacteos,Compra de producto,Wed Nov 27 2024 22:09:37 GMT-0300 (hora de verano de Chile)
+39,1,test product,20,150,301,2,lacteos,Venta de producto,Wed Nov 27 2024 22:09:44 GMT-0300 (hora de verano de Chile)
+40,3,test,1,1313,1500,3,zztestName21,Compra de producto,Wed Nov 27 2024 22:56:28 GMT-0300 (hora de verano de Chile)
