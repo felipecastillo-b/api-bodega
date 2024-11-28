@@ -13,10 +13,14 @@ def analyze_transactions(file_path):
     data['createdAt'] = pd.to_datetime(data['createdAt'], format='%a %b %d %Y %H:%M:%S')
 
     # Calcular el total de compras (donde reason es "Compra de producto")
-    total_purchase = data.loc[data['reason'] == 'Compra de producto', 'price'].sum()
+    total_purchase = data.loc[data['reason'] == 'Compra de producto'].apply(
+    lambda row: row['price'] * row['quantity'], axis=1
+    ).sum()
 
     # Calcular el total de ventas (donde reason es "Venta de producto")
-    total_sales = data.loc[data['reason'] == 'Venta de producto', 'priceSell'].sum()
+    total_sales = data.loc[data['reason'] == 'Venta de producto'].apply(
+    lambda row: row['priceSell'] * row['quantity'], axis=1
+    ).sum()
 
     # Calcular el balance
     balance = total_sales - total_purchase
@@ -32,14 +36,21 @@ def analyze_transactions(file_path):
     # Unir el resumen de ganancias con los nombres de los productos
     profit_summary = profit_summary.merge(data[['productId', 'productName']].drop_duplicates(), on='productId', how='left')
 
-    # Resumen por categoría
-    category_summary = data.groupby('categoryId').agg(
+    # Filtrar solo las ventas donde reason es "Venta de producto"
+    filtered_data = data[data['reason'] == 'Venta de producto']
+
+    # Resumen por categoría basado en el filtro
+    category_summary = filtered_data.groupby('categoryId').agg(
         total_sales=('quantity', 'sum'),
         total_profit=('profit', 'sum')
     ).reset_index()
 
     # Unir el resumen de ganancias con los nombres de las categorías
-    category_summary = category_summary.merge(data[['categoryId', 'categoryName']].drop_duplicates(), on='categoryId', how='left')
+    category_summary = category_summary.merge(
+        data[['categoryId', 'categoryName']].drop_duplicates(),
+        on='categoryId',
+        how='left'
+    )
 
     # Productos con más demanda (donde reason es "Venta de producto")
     demand_summary = data[data['reason'] == 'Venta de producto'].groupby('productName').agg(
