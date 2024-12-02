@@ -149,3 +149,27 @@ export const removeProductFromInventoryService = async (id) => {
         where: { id: parseInt(id) },
     });
 };
+
+export const updateMinimumQuantityService = async (inventoryId, productId, minimumQuantity) => {
+    const existingProduct = await prisma.inventoryProduct.findUnique({
+        where: {
+            inventoryId_productId: {
+                inventoryId: inventoryId,
+                productId: productId,
+            },
+        },
+    });
+
+    if (!existingProduct) {
+        throw new Error("Producto no encontrado en el inventario");
+    }
+
+    return await prisma.inventoryProduct.update({
+        where: {
+            id: existingProduct.id,
+        },
+        data: {
+            minimumQuantity: minimumQuantity,
+        },
+    });
+};

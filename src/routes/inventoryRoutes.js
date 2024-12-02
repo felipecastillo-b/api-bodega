@@ -11,7 +11,8 @@ import {
     updateProductQuantityInInventory,
     removeProductFromInventory,
     listInventoryProducts,
-    getAllProductsInInventory
+    getAllProductsInInventory,
+    updateMinimumQuantity
 } from '../controllers/inventoryController.js';
 const router = Router();
 
@@ -29,5 +30,6 @@ router.post('/:inventoryId/product', authenticate, addProductToInventory);
 router.get('/:inventoryId/product', authenticate, getProductsInInventory);
 router.put('/product/:id', authenticate, updateProductQuantityInInventory);
 router.delete('/inventory-product/:id', authenticate, removeProductFromInventory);
+router.patch('/:inventoryId/product/:productId/minimum-quantity', authenticate, updateMinimumQuantity);
 
 export default router;

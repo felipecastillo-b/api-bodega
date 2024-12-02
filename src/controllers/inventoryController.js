@@ -8,7 +8,8 @@ import {
     getProductsInInventoryService,
     updateProductQuantityInInventoryService,
     removeProductFromInventoryService,
-    getAllProductsInInventoryService
+    getAllProductsInInventoryService,
+    updateMinimumQuantityService
 } from '../services/inventoryService.js';
 import { createTransactionService } from '../services/transactionService.js';
 
@@ -201,5 +202,26 @@ export const removeProductFromInventory = async (req, res) => {
     } catch (error) {
         console.error("Error al eliminar el producto:", error);
         res.status(500).json({ error: 'Error al remover el producto del inventario' });
+    }
+};
+
+export const updateMinimumQuantity = async (req, res) => {
+    const { inventoryId, productId } = req.params;
+    const { minimumQuantity } = req.body;
+
+    const parsedInventoryId = parseInt(inventoryId);
+    const parsedProductId = parseInt(productId);
+    const parsedMinimumQuantity = parseInt(minimumQuantity);
+
+    if (isNaN(parsedInventoryId) || isNaN(parsedProductId) || isNaN(parsedMinimumQuantity)) {
+        return res.status(400).json({ error: 'Datos inválidos' });
+    }
+
+    try {
+        const updatedProduct = await updateMinimumQuantityService(parsedInventoryId, parsedProductId, parsedMinimumQuantity);
+        res.status(200).json({ message: 'Cantidad mínima actualizada correctamente', product: updatedProduct });
+    } catch (error) {
+        console.error("Error al actualizar la cantidad mínima:", error);
+        res.status(500).json({ error: 'Error al actualizar la cantidad mínima', details: error.message });
     }
 };
