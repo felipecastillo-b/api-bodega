@@ -50,9 +50,10 @@ pip install -r requirements.txt
 
 3) Configura las variables de entorno. Crea un archivo .env en la raíz del proyecto y agrega las variables necesarias (como se muestran en el **.env.example**).
 
-4) Ejecuta las migraciones de Prisma para configurar la base de datos:
+4) Ejecuta las migraciones de Prisma para configurar la base de datos (primero debes de crear la base de datos para correr el script.sql):
 ````
 npx prisma migrate dev
+psql -U postgres -d apibodega -f script.sql 
 ````
 
 5) Inicia el servidor:
@@ -82,6 +83,10 @@ npm run build
 ````
 npm start
 ````
+## Credenciales
+
+- **Email:** test@gmail.com
+- **Password:** test
 
 ## Análisis de Datos
 
